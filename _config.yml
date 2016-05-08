@@ -2,7 +2,7 @@
 title: AllanFlyAll
 header-img: "img/green.jpg"
 tagline: "cn"  
-description: "Allen Zheng|"  
+description: "Allen Zheng"  
 baseurl: ""
 url: "http://allanflyall.com"  
 
@@ -43,7 +43,7 @@ defaults:
       type: "posts"
     values:
       layout: "post"
-      author: "CnFeat"
+      author: "AllanFlyAll"
       header-img: "img/green.jpg" # We don't want posts without a header image, that whould mean white on white
 
 # Comments 
