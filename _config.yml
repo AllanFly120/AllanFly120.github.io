@@ -5,6 +5,7 @@ tagline: "cn"
 description: "Allen Zheng"  
 baseurl: ""
 url: "http://allanflyall.com"  
+gems: [jekyll-paginate]
 
 # About/contact
 owner: 
@@ -26,9 +27,10 @@ zhihu_username:
 # Build settings  
 # use Github Flavored Markdown !important  
 # document: http://jekyllrb.com/docs/configuration/#kramdown  
-# paginate: 8
+
 markdown: kramdown
 highlighter: rouge
+paginate: 8
 permalink: pretty
 exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
 
