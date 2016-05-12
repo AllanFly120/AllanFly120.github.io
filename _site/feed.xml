@@ -5,8 +5,8 @@
     <description>Allen Zheng</description>
     <link>http://allanflyall.com/</link>
     <atom:link href="http://allanflyall.com/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Tue, 10 May 2016 03:09:58 -0300</pubDate>
-    <lastBuildDate>Tue, 10 May 2016 03:09:58 -0300</lastBuildDate>
+    <pubDate>Thu, 12 May 2016 04:25:50 -0300</pubDate>
+    <lastBuildDate>Thu, 12 May 2016 04:25:50 -0300</lastBuildDate>
     <generator>Jekyll v3.1.3</generator>
     
       <item>
@@ -107,6 +107,53 @@ javascript除了具有我们知道的function语句声明方式以外，还有�
         <pubDate>Sun, 08 May 2016 00:00:00 -0300</pubDate>
         <link>http://allanflyall.com/blog/2016/05/08/js%E4%B8%89%E7%A7%8D%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E%E6%96%B9%E5%BC%8F%E7%9A%84%E6%AF%94%E8%BE%83/</link>
         <guid isPermaLink="true">http://allanflyall.com/blog/2016/05/08/js%E4%B8%89%E7%A7%8D%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E%E6%96%B9%E5%BC%8F%E7%9A%84%E6%AF%94%E8%BE%83/</guid>
+        
+        <category>js</category>
+        
+        <category>总结</category>
+        
+        
+        <category>blog</category>
+        
+      </item>
+    
+      <item>
+        <title>关于js闭包(closure)的理解</title>
+        <description>&lt;p&gt;##&lt;b&gt;闭包&lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;闭包在各种书上的解释还是很多的，不过总的来说很难理解，今天在读&lt;a href=&quot;https://www.gracecode.com/posts/2385.html&quot;&gt;闭包的秘密&lt;/a&gt;这篇文时发现了非常棒的解释：&lt;/p&gt;
+
+&lt;p&gt;###&lt;b&gt;&lt;u&gt;closure is where a function remembers what happens around it&lt;/u&gt;&lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;一般常见的使用方式就是在一个函数内定义另一个函数。外层函数中定义的变量是绑定在外层的变量对象(variable object)上。而如果内层函数需要访问外层函数的这个变量，这个变量不会被垃圾回收清除(garbage collection)。&lt;/p&gt;
+
+&lt;p&gt;一般的如果我们需要&lt;code class=&quot;highlighter-rouge&quot;&gt;记住&lt;/code&gt;绑定在环境变量中的所有变量，我们可以使用&lt;code class=&quot;highlighter-rouge&quot;&gt;var that = this&lt;/code&gt; 把&lt;code class=&quot;highlighter-rouge&quot;&gt;this&lt;/code&gt;的所有变量放入闭包中。下面的例子很好：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;	function main(link) {
+		link.onclick = function(e) {
+		var newa = document.createElement(&quot;a&quot;);
+		var tn = document.createTextNode(&quot;second&quot;);
+ 			newa.appendChild(tn);
+		newa.href = &quot;#&quot;;
+		this.firstChild.nodeValue = &quot;clicked&quot;;
+		var that = this; 
+		document.body.appendChild(newa); 
+		newa.onclick = function(e) {
+			that.firstChild.nodeValue = &quot;reset&quot;;
+			this.parentNode.removeChild(this); }
+		 }
+	}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;这段函数是点击link时link上的内容变为”clicked”,并在下面产生一个新的链接内容是”second”，如果点击”second”那么”clicked”会变成”reset”,并且”second”会消失&lt;/p&gt;
+
+&lt;p&gt;这就是典型的闭包：通过&lt;code class=&quot;highlighter-rouge&quot;&gt;var that = this; &lt;/code&gt;内层函数得以访问外层环境变量绑定的所有变量。&lt;/p&gt;
+
+</description>
+        <pubDate>Sun, 08 May 2016 00:00:00 -0300</pubDate>
+        <link>http://allanflyall.com/blog/2016/05/08/%E5%85%B3%E4%BA%8Ejs%E9%97%AD%E5%8C%85(closure)%E7%9A%84%E7%90%86%E8%A7%A3/</link>
+        <guid isPermaLink="true">http://allanflyall.com/blog/2016/05/08/%E5%85%B3%E4%BA%8Ejs%E9%97%AD%E5%8C%85(closure)%E7%9A%84%E7%90%86%E8%A7%A3/</guid>
         
         <category>js</category>
         

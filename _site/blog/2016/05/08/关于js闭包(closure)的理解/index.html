@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Allen Zheng">
 
-    <title>js三种函数声明方式的比较 - AllanFlyAll</title>
+    <title>关于js闭包(closure)的理解 - AllanFlyAll</title>
 
-    <link rel="canonical" href="http://allanflyall.com/blog/2016/05/08/js%E4%B8%89%E7%A7%8D%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E%E6%96%B9%E5%BC%8F%E7%9A%84%E6%AF%94%E8%BE%83/">
+    <link rel="canonical" href="http://allanflyall.com/blog/2016/05/08/%E5%85%B3%E4%BA%8Ejs%E9%97%AD%E5%8C%85(closure)%E7%9A%84%E7%90%86%E8%A7%A3/">
 
     <!-- Icons -->
   <link rel="shortcut icon" href="img/favicon.ico">
@@ -108,7 +108,7 @@
                         <a class="tag" href="/Tags/#总结" title="总结">总结</a>
                         
                     </div>
-                    <h1>js三种函数声明方式的比较</h1>
+                    <h1>关于js闭包(closure)的理解</h1>
                     
                     <span class="meta">Posted by AllanFlyAll on May 8, 2016</span>
                 </div>
@@ -126,98 +126,37 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 post-container">
 
-                <p>##<b>js三种函数声明方式的比较</b>
-javascript除了具有我们知道的function语句声明方式以外，还有两种声明方式：函数直接量式和Function构造式。下面来比较一下他们的异同</p>
+                <p>##<b>闭包</b></p>
 
-<hr />
-<ul>
-  <li>
-    <p>####function语句声明：</p>
+<p>闭包在各种书上的解释还是很多的，不过总的来说很难理解，今天在读<a href="https://www.gracecode.com/posts/2385.html">闭包的秘密</a>这篇文时发现了非常棒的解释：</p>
 
-    <div class="highlighter-rouge"><pre class="highlight"><code>  function test1() {
-          alert('i am test1');
- 	}
-</code></pre>
-    </div>
-  </li>
-</ul>
+<p>###<b><u>closure is where a function remembers what happens around it</u></b></p>
 
-<ol>
-  <li>这个函数具有优先解析优先级，类似于全局变量。编译完成后放到内存中再开始顺序执行，执行到这里的时候回跳过这条函数声明</li>
-  <li>这样带来的好处是效率比较高，函数不会被反复声明</li>
-</ol>
+<p>一般常见的使用方式就是在一个函数内定义另一个函数。外层函数中定义的变量是绑定在外层的变量对象(variable object)上。而如果内层函数需要访问外层函数的这个变量，这个变量不会被垃圾回收清除(garbage collection)。</p>
 
-<hr />
-<ul>
-  <li>
-    <p>####函数直接量式：</p>
+<p>一般的如果我们需要<code class="highlighter-rouge">记住</code>绑定在环境变量中的所有变量，我们可以使用<code class="highlighter-rouge">var that = this</code> 把<code class="highlighter-rouge">this</code>的所有变量放入闭包中。下面的例子很好：</p>
 
-    <div class="highlighter-rouge"><pre class="highlight"><code>  var test2 = function() {
-          alert('i am test2');
-  }
-</code></pre>
-    </div>
-  </li>
-</ul>
-
-<ol>
-  <li>
-    <p>这种方法最大的特点是类似于变量的先声明，后赋值在使用的特性。类似这样的用法：</p>
-
-    <div class="highlighter-rouge"><pre class="highlight"><code> test(2);
- var test = funtion(a) {
-     return a;
- }
-</code></pre>
-    </div>
-  </li>
-</ol>
-
-<p>在使用这种声明方式时是会报错的。</p>
-
-<hr />
-<ul>
-  <li>
-    <p>####Function构造式：</p>
-
-    <div class="highlighter-rouge"><pre class="highlight"><code>  var test3 = new Function("a", "b", "return a + b");
- 	alert(test3(10, 20));
-</code></pre>
-    </div>
-  </li>
-</ul>
-
-<ol>
-  <li>首先主语一定是Function，要大写。”a”, “b” 和语句要加引号</li>
-  <li>此方法最大特点是具有全局作用域</li>
-  <li>不过不会被保存在内存中，有可能被反复声明</li>
-</ol>
-
-<hr />
-
-<p>####一个经典例子</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>	function f(){return 1;}                // 函数1  
-    alert(f());           
-    var f = new Function("return 2;");      // 函数2 
-    alert(f()); 
-    var f = function(){return 3;}           // 函数3 
-    alert(f());  
-    function f(){return 4;}                 // 函数4 
-    alert(f()); 
-    var f = new Function("return 5");       // 函数5 
-    alert(f()); 
-    var f = function(){return 6 ;}          // 函数6 
-    alert(f()); 
+<div class="highlighter-rouge"><pre class="highlight"><code>	function main(link) {
+		link.onclick = function(e) {
+		var newa = document.createElement("a");
+		var tn = document.createTextNode("second");
+ 			newa.appendChild(tn);
+		newa.href = "#";
+		this.firstChild.nodeValue = "clicked";
+		var that = this; 
+		document.body.appendChild(newa); 
+		newa.onclick = function(e) {
+			that.firstChild.nodeValue = "reset";
+			this.parentNode.removeChild(this); }
+		 }
+	}
 </code></pre>
 </div>
 
-<p>这里alert出来的值的顺序是什么？</p>
+<p>这段函数是点击link时link上的内容变为”clicked”,并在下面产生一个新的链接内容是”second”，如果点击”second”那么”clicked”会变成”reset”,并且”second”会消失</p>
 
-<p>答案是 ` 4 2 3 3 5 6`</p>
+<p>这就是典型的闭包：通过<code class="highlighter-rouge">var that = this; </code>内层函数得以访问外层环境变量绑定的所有变量。</p>
 
-<p>首先function语句声明会被优先解析，那么函数函数1，函数4会被首先解析。而函数4可以覆盖函数1，因为名字相同。那么内存中存下了函数4，下面开始顺序执行。
-第一句已经在内存中，这里将跳过不执行，第二句输出了被覆盖的<code class="highlighter-rouge">f()</code>输出<code class="highlighter-rouge">4</code>；第三句到第六句都是正常执行，输出<code class="highlighter-rouge">2 3</code>;第七句和第一句一样被跳过，呢么第八句执行内存中的<code class="highlighter-rouge">f()</code>，输出之前的<code class="highlighter-rouge">f()</code>即<code class="highlighter-rouge">3</code>;之后继续顺序执行，输出<code class="highlighter-rouge">5 6</code></p>
 
 
                 <hr>
@@ -225,9 +164,13 @@ javascript除了具有我们知道的function语句声明方式以外，还有�
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/blog/2016/05/08/%E5%85%B3%E4%BA%8Ejs%E9%97%AD%E5%8C%85(closure)%E7%9A%84%E7%90%86%E8%A7%A3/" data-toggle="tooltip" data-placement="top" title="关于js闭包(closure)的理解">&larr; Previous Post</a>
+                        <a href="/blog/2016/05/08/js%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E9%81%8D%E5%8E%86/" data-toggle="tooltip" data-placement="top" title="js数组遍历的方法">&larr; Previous Post</a>
                     </li>
                     
+                    
+                    <li class="next">
+                        <a href="/blog/2016/05/08/js%E4%B8%89%E7%A7%8D%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E%E6%96%B9%E5%BC%8F%E7%9A%84%E6%AF%94%E8%BE%83/" data-toggle="tooltip" data-placement="top" title="js三种函数声明方式的比较">Next Post &rarr;</a>
+                    </li>
                     
                 </ul>
 
@@ -245,11 +188,14 @@ javascript除了具有我们知道的function语句声明方式以外，还有�
                 </style>
 
                 <div class="ds-share"
-                    data-thread-key="/blog/2016/05/08/js三种函数声明方式的比较" data-title="js三种函数声明方式的比较"
+                    data-thread-key="/blog/2016/05/08/关于js闭包(closure)的理解" data-title="关于js闭包(closure)的理解"
                     data-images="http://allanflyall.com/img/green.jpg"
-                    data-content="##js三种函数声明方式的比较
-javascript除了具有我们知道的function语句声明方式以外，还有两种声明方式：函数直接量式和Function构... | Microdust:Azeril's blog"
-                    data-url="http://allanflyall.com/blog/2016/05/08/js%E4%B8%89%E7%A7%8D%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E%E6%96%B9%E5%BC%8F%E7%9A%84%E6%AF%94%E8%BE%83/">
+                    data-content="##闭包
+
+闭包在各种书上的解释还是很多的，不过总的来说很难理解，今天在读闭包的秘密这篇文时发现了非常棒的解释：
+
+###closure is where... | Microdust:Azeril's blog"
+                    data-url="http://allanflyall.com/blog/2016/05/08/%E5%85%B3%E4%BA%8Ejs%E9%97%AD%E5%8C%85(closure)%E7%9A%84%E7%90%86%E8%A7%A3/">
                     <div class="ds-share-inline">
                       <ul  class="ds-share-icons-16">
 
@@ -268,7 +214,7 @@ javascript除了具有我们知道的function语句声明方式以外，还有�
 
                 <!-- 多说评论框 start -->
                 <div class="comment">
-                    <div class="ds-thread" data-thread-key="/blog/2016/05/08/js三种函数声明方式的比较" data-title="js三种函数声明方式的比较" data-url="http://allanflyall.com/blog/2016/05/08/js%E4%B8%89%E7%A7%8D%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E%E6%96%B9%E5%BC%8F%E7%9A%84%E6%AF%94%E8%BE%83/"></div>
+                    <div class="ds-thread" data-thread-key="/blog/2016/05/08/关于js闭包(closure)的理解" data-title="关于js闭包(closure)的理解" data-url="http://allanflyall.com/blog/2016/05/08/%E5%85%B3%E4%BA%8Ejs%E9%97%AD%E5%8C%85(closure)%E7%9A%84%E7%90%86%E8%A7%A3/"></div>
                 </div>
                 <!-- 多说评论框 end -->
             </div>
