@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Allen Zheng">
 
-    <title>js数组遍历的方法 - AllanFlyAll</title>
+    <title>关于js闭包(closure)的理解 - AllanFlyAll</title>
 
-    <link rel="canonical" href="http://allanflyall.com/blog/2016/05/08/js%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E9%81%8D%E5%8E%86/">
+    <link rel="canonical" href="http://allanflyall.com/blog/2016/05/12/%E5%85%B3%E4%BA%8Ejs%E9%97%AD%E5%8C%85(closure)%E7%9A%84%E7%90%86%E8%A7%A3/">
 
     <!-- Icons -->
   <link rel="shortcut icon" href="img/favicon.ico">
@@ -108,9 +108,9 @@
                         <a class="tag" href="/Tags/#总结" title="总结">总结</a>
                         
                     </div>
-                    <h1>js数组遍历的方法</h1>
+                    <h1>关于js闭包(closure)的理解</h1>
                     
-                    <span class="meta">Posted by AllanFlyAll on May 8, 2016</span>
+                    <span class="meta">Posted by AllanFlyAll on May 12, 2016</span>
                 </div>
             </div>
         </div>
@@ -126,105 +126,47 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 post-container">
 
-                <p>##<b>js数组遍历的方法</b>##
-<u>除了for以外的用法</u></p>
+                <p>##<b>闭包</b></p>
 
-<p>####<code class="highlighter-rouge"> every</code></p>
+<p>闭包在各种书上的解释还是很多的，不过总的来说很难理解，今天在读<a href="https://www.gracecode.com/posts/2385.html">闭包的秘密</a>这篇文时发现了非常棒的解释：</p>
 
-<ol>
-  <li>对于数组的每个元素进行运行如果都返回<code class="highlighter-rouge">true</code>，最后返回<code class="highlighter-rouge">true</code></li>
-  <li>
-    <p>判断数组元素是不是都大于2</p>
+<p>###<b><u>closure is where a function remembers what happens around it</u></b></p>
 
-    <div class="highlighter-rouge"><pre class="highlight"><code> var arr = [1, 2, 3, 4, 5, 6, 7]
+<p>一般常见的使用方式就是在一个函数内定义另一个函数。外层函数中定义的变量是绑定在外层的变量对象(variable object)上。而如果内层函数需要访问外层函数的这个变量，这个变量不会被垃圾回收清除(garbage collection)。</p>
 
- var res = arr.every(funtion(item, index, array){
-     return item &gt; 2;
- });
- return res //res = false
-</code></pre>
-    </div>
-  </li>
-</ol>
+<p>一般的如果我们需要<code class="highlighter-rouge">记住</code>绑定在环境变量中的所有变量，我们可以使用<code class="highlighter-rouge">var that = this</code> 把<code class="highlighter-rouge">this</code>的所有变量放入闭包中。下面的例子很好：</p>
 
-<p>-
-####<code class="highlighter-rouge">filter</code>
-返回过滤后的结果</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>	var res = arr.filter(funtion(item, index, array){
-		return item &gt; 2;
-	});
+<div class="highlighter-rouge"><pre class="highlight"><code>	function main(link) {
+		link.onclick = function(e) {
+		var newa = document.createElement("a");
+		var tn = document.createTextNode("second");
+ 			newa.appendChild(tn);
+		newa.href = "#";
+		this.firstChild.nodeValue = "clicked";
+		var that = this; 
+		document.body.appendChild(newa); 
+		newa.onclick = function(e) {
+			that.firstChild.nodeValue = "reset";
+			this.parentNode.removeChild(this); }
+		 }
+	}
 </code></pre>
 </div>
 
-<p>-
-####<code class="highlighter-rouge"> foreach</code></p>
+<p>这段函数是点击link时link上的内容变为”clicked”,并在下面产生一个新的链接内容是”second”，如果点击”second”那么”clicked”会变成”reset”,并且”second”会消失</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>	var res = arr.foreach(function(item, index, arr){
-		//do something
-	});
-</code></pre>
-</div>
+<p>这就是典型的闭包：通过<code class="highlighter-rouge">var that = this; </code>内层函数得以访问外层环境变量绑定的所有变量。</p>
 
-<p>-
-####<code class="highlighter-rouge">map</code></p>
-
-<ol>
-  <li>
-    <p>数组对每个元素运行，完毕后返回新结果。常用于处理大量输入统一函数</p>
-
-    <div class="highlighter-rouge"><pre class="highlight"><code> var res = arr.map(function(item, index, arr){
-     return item * 2;
- });
- alert(res); //[2, 4, 6, 8, 10, 12, 14]
-</code></pre>
-    </div>
-  </li>
-</ol>
-
-<p>-
-####<code class="highlighter-rouge">some</code></p>
-
-<ol>
-  <li>
-    <p>与every对应，不过只要有一项返回<code class="highlighter-rouge">true</code>，则返回<code class="highlighter-rouge">true</code></p>
-
-    <div class="highlighter-rouge"><pre class="highlight"><code> var res = arr.some(funtion(item, index, array){
-             return item &gt;= 7;
-         });
-         return res //res = true
-</code></pre>
-    </div>
-  </li>
-</ol>
-
-<p>-
-####<code class="highlighter-rouge">reduce</code></p>
-
-<ol>
-  <li>这个不算遍历方法不过也非常常用</li>
-  <li>有reduce和reduceRight,基本一样只不过reduceRight是从右边开始</li>
-  <li>
-    <p>传入方程prev, curr, index当前序号, array</p>
-
-    <div class="highlighter-rouge"><pre class="highlight"><code> var res = arr.reduce(funtion(prev, curr, index, array){
-             return prev + curr;
-         });
-         return res //res = 
-</code></pre>
-    </div>
-  </li>
-</ol>
 
 
                 <hr>
 
                 <ul class="pager">
                     
-                    
-                    <li class="next">
-                        <a href="/blog/2016/05/08/js%E4%B8%89%E7%A7%8D%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E%E6%96%B9%E5%BC%8F%E7%9A%84%E6%AF%94%E8%BE%83/" data-toggle="tooltip" data-placement="top" title="js三种函数声明方式的比较">Next Post &rarr;</a>
+                    <li class="previous">
+                        <a href="/blog/2016/05/08/js%E4%B8%89%E7%A7%8D%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E%E6%96%B9%E5%BC%8F%E7%9A%84%E6%AF%94%E8%BE%83/" data-toggle="tooltip" data-placement="top" title="js三种函数声明方式的比较">&larr; Previous Post</a>
                     </li>
+                    
                     
                 </ul>
 
@@ -242,18 +184,14 @@
                 </style>
 
                 <div class="ds-share"
-                    data-thread-key="/blog/2016/05/08/js的几个基本遍历" data-title="js数组遍历的方法"
+                    data-thread-key="/blog/2016/05/12/关于js闭包(closure)的理解" data-title="关于js闭包(closure)的理解"
                     data-images="http://allanflyall.com/img/green.jpg"
-                    data-content="##js数组遍历的方法##
-除了for以外的用法
+                    data-content="##闭包
 
-#### every
+闭包在各种书上的解释还是很多的，不过总的来说很难理解，今天在读闭包的秘密这篇文时发现了非常棒的解释：
 
-
-  对于数组的每个元素进行运行如果都返回true，最后返回true
-  
- ... | Microdust:Azeril's blog"
-                    data-url="http://allanflyall.com/blog/2016/05/08/js%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E9%81%8D%E5%8E%86/">
+###closure is where... | Microdust:Azeril's blog"
+                    data-url="http://allanflyall.com/blog/2016/05/12/%E5%85%B3%E4%BA%8Ejs%E9%97%AD%E5%8C%85(closure)%E7%9A%84%E7%90%86%E8%A7%A3/">
                     <div class="ds-share-inline">
                       <ul  class="ds-share-icons-16">
 
@@ -272,7 +210,7 @@
 
                 <!-- 多说评论框 start -->
                 <div class="comment">
-                    <div class="ds-thread" data-thread-key="/blog/2016/05/08/js的几个基本遍历" data-title="js数组遍历的方法" data-url="http://allanflyall.com/blog/2016/05/08/js%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E9%81%8D%E5%8E%86/"></div>
+                    <div class="ds-thread" data-thread-key="/blog/2016/05/12/关于js闭包(closure)的理解" data-title="关于js闭包(closure)的理解" data-url="http://allanflyall.com/blog/2016/05/12/%E5%85%B3%E4%BA%8Ejs%E9%97%AD%E5%8C%85(closure)%E7%9A%84%E7%90%86%E8%A7%A3/"></div>
                 </div>
                 <!-- 多说评论框 end -->
             </div>

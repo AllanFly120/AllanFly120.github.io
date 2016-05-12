@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 关于js闭包(closure)的理解
-date: 2016-5-08
+date: 2016-5-12
 categories: blog
 tags: [js, 总结]
 ---
